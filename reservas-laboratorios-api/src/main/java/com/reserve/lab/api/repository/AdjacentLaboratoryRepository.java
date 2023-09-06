@@ -2,7 +2,6 @@ package com.reserve.lab.api.repository;
 
 import com.reserve.lab.api.model.AdjacentLaboratory;
 import com.reserve.lab.api.model.Laboratory;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdjacentLaboratoryRepository extends CrudRepository<AdjacentLaboratory, Long>, JpaSpecificationExecutor<Laboratory> {
+public interface AdjacentLaboratoryRepository extends CrudRepository<AdjacentLaboratory, Long> {
     List<AdjacentLaboratory> findAllAdjacentLaboratoriesByLaboratoryId(Long laboratoryId);
 
     Optional<AdjacentLaboratory> findByLaboratoryAndAdjacentLaboratory(Laboratory laboratory, Laboratory adjacentLaboratory);

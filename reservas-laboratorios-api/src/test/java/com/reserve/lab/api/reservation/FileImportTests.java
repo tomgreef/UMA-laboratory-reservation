@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -47,6 +48,7 @@ class FileImportTests {
     }
 
     @Test
+    @Transactional
     void importFileWithErrors() {
         List<ReservationDto> reservations = dataGeneratorService.getReservations(NUMBER_OF_RESERVATIONS);
         Random random = new Random();

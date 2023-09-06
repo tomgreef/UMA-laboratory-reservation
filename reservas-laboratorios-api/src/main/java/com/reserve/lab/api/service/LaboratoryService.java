@@ -30,49 +30,6 @@ public class LaboratoryService {
     private final AdjacentLaboratoryService adjacentLaboratoryService;
     private final ReservationAssignmentService reservationAssignmentService;
 
-    public List<Laboratory> findAvailableLaboratories(Reservation reservation) {
-        Integer capacity = reservation.getStudentsNumber();
-        String location = reservation.getLocation();
-        String operatingSystem = reservation.getOperatingSystem();
-        String additionalEquipment = reservation.getAdditionalEquipment();
-
-        List<Laboratory> result = repository.findAll(buildQuery(capacity, location, operatingSystem, additionalEquipment));
-        if (result.isEmpty()) {
-            result = repository.findAll(buildQuery(capacity, location, operatingSystem, null));
-
-            if (result.isEmpty()) {
-                result = repository.findAll(buildQuery(capacity, location, null, null));
-
-                if (result.isEmpty()) {
-                    return repository.findAll(buildQuery(capacity, null, null, null));
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private Specification<Laboratory> buildQuery(Integer capacity, String location, String operatingSystem, String additionalEquipment) {
-        return (Root<Laboratory> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction();
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("capacity"), capacity));
-
-            if (location != null && !location.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("location"), location));
-            }
-
-            if (operatingSystem != null && !operatingSystem.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("operatingSystem"), operatingSystem));
-            }
-
-            if (additionalEquipment != null && !additionalEquipment.isEmpty() && !additionalEquipment.equals(AnythingType.NOTHING.name())) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("additionalEquipment"), "%" + additionalEquipment + "%"));
-            }
-
-            return predicate;
-        };
-    }
-
     public List<LaboratoryDto> getAllDto() {
         List<Laboratory> laboratories = repository.findAllByOrderByName();
         return transformer.mapModelsToDtos(laboratories);

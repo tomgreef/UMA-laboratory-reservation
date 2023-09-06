@@ -349,27 +349,42 @@ public class GeneticAlgorithmService {
     }
 
     private void mutate(List<Solution> offspring) {
+        List<Laboratory> laboratories = laboratoryService.findAll();
+        // Do a double mutation type, one for the whole solution and another for the reservations with conflicts
         // Implement a mutation method to introduce small random changes in the offspring solutions
-        // Mutate the assignations with conflicts by changing the assigned laboratory of the reservation to another available laboratory        
         for (Solution solution : offspring) {
+            for (ReservationAssignment reservationAssignment : solution.getAssignments()) {
+                if (rand.nextDouble() < properties.getMutationRate()) {
+                    assignNewLaboratory(reservationAssignment, laboratories);
+                }
+            }
+
+            // Repair mutation: mutate the assignations with  conflicts by changing the assigned laboratory of the reservation to another available laboratory
             List<ReservationConflict> conflicts = reservationConflictService.findConflicts(solution.getAssignments());
             List<ReservationAssignment> assignmentsWithConflict = solution.getAssignments().stream().filter(assignment ->
-                            conflicts.stream().anyMatch(conflict ->
-                                    conflict.getReservation1().getId().equals(assignment.getReservation().getId())
-                                            || conflict.getReservation2().getId().equals(assignment.getReservation().getId())))
-                    .toList();
+                    hasMatchingReservation(assignment, conflicts)).toList();
             for (ReservationAssignment reservationAssignment : assignmentsWithConflict) {
-                if (rand.nextDouble() < properties.getMutationRate()) {
-                    List<Laboratory> availableLaboratories = laboratoryService.findAvailableLaboratories(reservationAssignment.getReservation()).stream().filter(laboratory -> !laboratory.getId().equals(reservationAssignment.getLaboratory().getId())).toList();
-                    if (availableLaboratories.isEmpty()) {
-                        continue;
-                    }
-
-                    Laboratory newLaboratory = availableLaboratories.get(rand.nextInt(availableLaboratories.size()));
-                    reservationAssignment.setLaboratory(newLaboratory);
+                if (rand.nextDouble() < properties.getMutationRepairRate()) {
+                    assignNewLaboratory(reservationAssignment, laboratories);
                 }
             }
         }
+    }
+
+    private boolean hasMatchingReservation(ReservationAssignment reservationAssignment, List<ReservationConflict> conflicts) {
+        return conflicts.stream().anyMatch(conflict ->
+                conflict.getReservation1().getId().equals(reservationAssignment.getReservation().getId()) ||
+                        conflict.getReservation2().getId().equals(reservationAssignment.getReservation().getId()));
+    }
+
+    private void assignNewLaboratory(ReservationAssignment reservationAssignment, List<Laboratory> laboratories) {
+        List<Laboratory> availableLaboratories = laboratories.stream().filter(l -> l.isSuitableFor(reservationAssignment.getReservation()) && !Objects.equals(l.getId(), reservationAssignment.getLaboratory().getId())).toList();
+        if (availableLaboratories.isEmpty()) {
+            return;
+        }
+
+        Laboratory newLaboratory = availableLaboratories.get(rand.nextInt(availableLaboratories.size()));
+        reservationAssignment.setLaboratory(newLaboratory);
     }
 
     private List<Solution> replacement(List<Solution> population, List<Solution> offspring) {

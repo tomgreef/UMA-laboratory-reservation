@@ -1,6 +1,7 @@
 package com.reserve.lab.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reserve.lab.api.model.Semester;
 import com.reserve.lab.api.model.dto.ReservationDto;
 import com.reserve.lab.api.model.dto.ResponseDto;
 import com.reserve.lab.api.service.ReservationService;
@@ -30,7 +31,9 @@ public class ReservationController {
             List<ReservationDto> reservations = Arrays.asList(objectMapper.readValue(jsonData, ReservationDto[].class));
             log.info("Reservation list received with {} entries", reservations.size());
 
-            return ResponseEntity.ok(new ResponseDto(service.saveExcel(reservations, semesterService.findActiveSemester()), null));
+            Semester semester = semesterService.findActiveSemester();
+            service.deleteAllBySemester(semester);
+            return ResponseEntity.ok(new ResponseDto(service.saveExcel(reservations, semester), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(null, e.getMessage()));
         }

@@ -21,7 +21,10 @@ public class AlgorithmProperties {
     private double crossoverRate = 0.5;
     @Min(value = 0, message = "El valor debe estar entre 0 y 1")
     @Max(value = 1, message = "El valor debe estar entre 0 y 1")
-    private double mutationRate = 0.8;
+    private double mutationRate = 0.4;
+    @Min(value = 0, message = "El valor debe estar entre 0 y 1")
+    @Max(value = 1, message = "El valor debe estar entre 0 y 1")
+    private double mutationRepairRate = 0.8;
     @Min(value = 0, message = "El valor debe estar entre 0 y 1")
     @Max(value = 1, message = "El valor debe estar entre 0 y 1")
     private double elitismReplacementRate = 0.5;
@@ -31,6 +34,7 @@ public class AlgorithmProperties {
         this.maxGeneration = updatedProperties.maxGeneration;
         this.crossoverRate = updatedProperties.crossoverRate;
         this.mutationRate = updatedProperties.mutationRate;
+        this.mutationRepairRate = updatedProperties.mutationRepairRate;
         this.elitismReplacementRate = updatedProperties.elitismReplacementRate;
     }
 }

@@ -30,10 +30,7 @@ public class ReservationService {
     private final ReservationConflictService reservationConflictService;
     private final LaboratoryService laboratoryService;
 
-    @Transactional
     public List<ReservationDtoWithError> saveExcel(List<ReservationDto> dtoList, Semester semester) {
-        deleteAllBySemester(semester);
-
         List<Reservation> modelsToSave = new ArrayList<>();
         List<ReservationDtoWithError> dtoWithErrors = new ArrayList<>();
         Set<Integer> publicIdsToDelete = new HashSet<>();
@@ -80,6 +77,7 @@ public class ReservationService {
         return repository.findAllBySemesterId(semesterId);
     }
 
+    @Transactional
     public void deleteAllBySemester(Semester semester) {
         reservationAssignmentService.deleteAllBySemester(semester);
         reservationConflictService.deleteAllBySemester(semester);

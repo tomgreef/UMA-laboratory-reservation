@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LaboratoryRepository extends CrudRepository<Laboratory, Long>, JpaSpecificationExecutor<Laboratory> {
+public interface LaboratoryRepository extends CrudRepository<Laboratory, Long> {
     List<Laboratory> findAllByOrderByName();
 }
