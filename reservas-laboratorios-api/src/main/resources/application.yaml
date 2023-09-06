@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/reservas-laboratorios
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+  jpa:
+    open-in-view: false
+springdoc:
+  # http://localhost:8080/swagger-ui/index.html
+  swagger-ui:
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+openapi:
+  url: http://localhost:8080
+logging:
+  pattern:
+    console: "%clr(%level) %logger{36} - %msg%n"
+  level:
+    root: info
+scheduler:
+  cron: "*/30 * * * * *"
+algorithm:
+  populationSize: 50
+  maxGeneration: 50
+  crossover-rate: 0.4
+  mutation-rate: 0.8
+  elitism-replacement-rate: 0.5

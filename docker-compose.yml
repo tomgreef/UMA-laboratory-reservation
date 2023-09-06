@@ -1,0 +1,41 @@
+version: "3"
+name: reservas-laboratorios
+services:
+  backend:
+    container_name: api
+    build:
+      context: ./reservas-laboratorios-api
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - reservas-laboratorios-network
+
+  frontend:
+    container_name: ui
+    build:
+      context: ./reservas-laboratorios-ui
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - reservas-laboratorios-network
+
+  postgres:
+    container_name: postgre_db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: reservas-laboratorios
+    ports:
+      - "5432:5432"
+    networks:
+      - reservas-laboratorios-network
+
+networks:
+  reservas-laboratorios-network:
