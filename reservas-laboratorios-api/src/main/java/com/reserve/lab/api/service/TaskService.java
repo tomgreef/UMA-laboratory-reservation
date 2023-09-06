@@ -7,7 +7,6 @@ import com.reserve.lab.api.repository.TaskRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import java.util.Optional;
 public class TaskService {
     private final TaskRepository repository;
 
-    @Transactional
     public void createTask(Semester semester) {
         Optional<Task> foundTask = repository.findByStatusAndSemester(String.valueOf(TaskStatusType.QUEUED), semester);
         if (foundTask.isEmpty()) {

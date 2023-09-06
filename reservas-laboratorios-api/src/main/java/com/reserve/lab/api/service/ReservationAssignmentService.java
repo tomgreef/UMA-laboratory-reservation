@@ -9,7 +9,6 @@ import com.reserve.lab.api.repository.ReservationAssignmentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.Comparator;
@@ -29,7 +28,6 @@ public class ReservationAssignmentService {
         repository.saveAll(assignments);
     }
 
-    @Transactional
     public void deleteAllBySemester(Semester semester) {
         repository.deleteAllBySemester(semester);
     }
@@ -55,13 +53,12 @@ public class ReservationAssignmentService {
         return assignmentDto;
     }
 
-    @Transactional
     public void deleteAllByLaboratory(Laboratory laboratory) {
         List<ReservationAssignment> reservationAssignments = repository.findAllByLaboratory(laboratory);
         Set<Semester> semesters = reservationAssignments.stream().map(ReservationAssignment::getSemester).collect(Collectors.toSet());
         semesters.forEach(semester -> {
-            deleteAllBySemester(semester);
             conflictService.deleteAllBySemester(semester);
+            deleteAllBySemester(semester);
         });
     }
 }

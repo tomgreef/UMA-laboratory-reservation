@@ -82,7 +82,6 @@ public class LaboratoryService {
         return repository.findAllByOrderByName();
     }
 
-    @Transactional
     public void delete(Long id) {
         Laboratory laboratory = repository.findById(id).orElseThrow(() -> {
             log.error("Laboratory not found");
@@ -104,7 +103,6 @@ public class LaboratoryService {
         return model;
     }
 
-    @Transactional
     public void upsert(List<Reservation> reservationsWithLaboratoryPreference) {
         List<Laboratory> existingLaboratories = (List<Laboratory>) repository.findAll();
         List<Laboratory> newLaboratoriesToSave = new ArrayList<>();

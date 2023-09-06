@@ -21,6 +21,7 @@ logging:
     console: "%clr(%level) %logger{36} - %msg%n"
   level:
     root: info
+    com.reserve.lab: info
 scheduler:
   cron: "*/30 * * * * *"
 algorithm:

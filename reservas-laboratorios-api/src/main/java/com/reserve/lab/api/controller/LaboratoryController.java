@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -40,6 +41,7 @@ public class LaboratoryController {
     }
 
     @DeleteMapping(value = "/laboratories")
+    @Transactional
     public ResponseEntity<ResponseDto> deleteLaboratory(@RequestBody Long id) {
         try {
             service.delete(id);

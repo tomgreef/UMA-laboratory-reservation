@@ -56,7 +56,6 @@ public class AdjacentLaboratoryService {
         return repository.findByLaboratoryAndAdjacentLaboratory(laboratory, adjacentLaboratory).orElseThrow(() -> new RuntimeException("Laboratory not found, laboratoryId: " + laboratory.getId() + ", adjacentLaboratoryId: " + adjacentLaboratory.getId()));
     }
 
-    @Transactional
     public void deleteByLaboratory(Laboratory laboratory) {
         repository.deleteAllByLaboratoryOrAdjacentLaboratory(laboratory);
     }

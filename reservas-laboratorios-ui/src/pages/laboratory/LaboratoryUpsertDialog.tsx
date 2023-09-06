@@ -29,7 +29,7 @@ const UpsertLaboratory: FC<UpsertLaboratoryProps> = ({ refetchLaboratories, exis
   const [saveLaboratory] = useCustomMutation<Laboratory, Laboratory>("laboratories");
   const { name, capacity, location, operatingSystem, additionalEquipment, adjacentLaboratories } = newLaboratory;
 
-  const nameAlreadyExists = existingLaboratories.filter((laboratory) => laboratory.id !== existingLaboratory?.id).some((laboratory) => laboratory.name === name);
+  const nameAlreadyExists = existingLaboratories.filter((laboratory) => laboratory.id !== existingLaboratory?.id).some((laboratory) => laboratory.name.toUpperCase().trim() === name.toUpperCase().trim());
   const saveIsDisabled = !name || !capacity || !location || nameAlreadyExists;
 
   const distinctLocations = [...new Set(existingLaboratories.map((laboratory) => laboratory.location))];

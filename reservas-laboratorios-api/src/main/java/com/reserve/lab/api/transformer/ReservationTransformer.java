@@ -8,6 +8,7 @@ import com.reserve.lab.api.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -41,7 +42,7 @@ public class ReservationTransformer {
         responsibles = (List<Responsible>) responsibleRepository.findAll();
         departments = (List<Department>) departmentRepository.findAll();
     }
-
+    @Transactional
     public Reservation createModelFromDto(ReservationDto dto) {
         Reservation model = new Reservation();
         try {
@@ -53,6 +54,7 @@ public class ReservationTransformer {
         return model;
     }
 
+    @Transactional
     public void mapValuesToModel(ReservationDto dto, Reservation model) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
@@ -91,13 +93,13 @@ public class ReservationTransformer {
         model.setAdditionalEquipment(cleanString(AnythingType.verify(dto.getAdditionalEquipment())));
 
         // Database entities
-        Degree degree = degrees.stream().filter(d -> d.getName().equals(dto.getDegreeName())).findFirst().orElse(saveAndStoreEntityInList(new Degree(dto.getDegreeName()), degreeRepository, degrees));
-        Subject subject = subjects.stream().filter(s -> s.isInDto(dto)).findFirst().orElse(saveAndStoreEntityInList(new Subject(dto), subjectRepository, subjects));
-        Professor professor = professors.stream().filter(p -> p.isInDto(dto)).findFirst().orElse(saveAndStoreEntityInList(new Professor(dto), professorRepository, professors));
-        Responsible responsible = responsibles.stream().filter(r -> r.isInDto(dto)).findFirst().orElse(saveAndStoreEntityInList(new Responsible(dto), responsibleRepository, responsibles));
+        Degree degree= degrees.stream().filter(d -> d.getName().equals(dto.getDegreeName())).findFirst().orElseGet(() -> saveAndStoreEntityInList(new Degree(dto.getDegreeName()), degreeRepository, degrees));
+        Subject subject = subjects.stream().filter(s -> s.isInDto(dto)).findFirst().orElseGet(() ->saveAndStoreEntityInList(new Subject(dto), subjectRepository, subjects));
+        Professor professor = professors.stream().filter(p -> p.isInDto(dto)).findFirst().orElseGet(() ->saveAndStoreEntityInList(new Professor(dto), professorRepository, professors));
+        Responsible responsible = responsibles.stream().filter(r -> r.isInDto(dto)).findFirst().orElseGet(() ->saveAndStoreEntityInList(new Responsible(dto), responsibleRepository, responsibles));
         Department department = null;
         if (dto.getDepartmentName() != null && !dto.getDepartmentName().isEmpty()) {
-            department = departments.stream().filter(d -> d.getName().equals(dto.getDepartmentName())).findFirst().orElse(saveAndStoreEntityInList(new Department(dto.getDepartmentName()), departmentRepository, departments));
+            department = departments.stream().filter(d -> d.getName().equals(dto.getDepartmentName())).findFirst().orElseGet(() ->saveAndStoreEntityInList(new Department(dto.getDepartmentName()), departmentRepository, departments));
         }
 
         model.setTeachingType(TeachingType.fromDisplayValue(dto.getTeachingType()));
@@ -108,7 +110,8 @@ public class ReservationTransformer {
         model.setDepartment(department);
     }
 
-    private <MODEL, REPOSITORY extends CrudRepository<MODEL, Long>> MODEL saveAndStoreEntityInList(MODEL model, REPOSITORY repository, List<MODEL> list) {
+    @Transactional
+    public <MODEL, REPOSITORY extends CrudRepository<MODEL, Long>> MODEL saveAndStoreEntityInList(MODEL model, REPOSITORY repository, List<MODEL> list) {
         MODEL modelWithId = repository.save(model);
         list.add(modelWithId);
         return modelWithId;

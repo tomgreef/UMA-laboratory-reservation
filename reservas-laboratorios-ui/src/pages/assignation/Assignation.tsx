@@ -81,6 +81,15 @@ const AssignationPage: FC = () => {
       </BoxWrapper>
     );
 
+  if (!data.assignments.length)
+    return (
+      <BoxWrapper>
+        <Typography variant="h6" align="center">
+          No hay asignaciones para mostrar, vuelva a importar el CSV.
+        </Typography>
+      </BoxWrapper>
+    );
+
   return (
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center">
