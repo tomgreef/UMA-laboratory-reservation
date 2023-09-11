@@ -3,6 +3,7 @@ package com.reserve.lab.api.service;
 import com.reserve.lab.api.model.Task;
 import com.reserve.lab.api.model.type.TaskStatusType;
 import com.reserve.lab.api.repository.TaskRepository;
+import com.reserve.lab.api.service.algorithm.GeneticAlgorithmService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;

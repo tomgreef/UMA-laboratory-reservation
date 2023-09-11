@@ -14,6 +14,7 @@ import com.reserve.lab.api.model.dto.SemesterDto;
 import com.reserve.lab.api.model.helper.Solution;
 import com.reserve.lab.api.model.type.PenaltyType;
 import com.reserve.lab.api.service.*;
+import com.reserve.lab.api.service.algorithm.GeneticAlgorithmService;
 import com.reserve.lab.api.utils.DataGeneratorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +157,7 @@ class GeneticAlgorithmTest {
 
         // Calculate the initial penalty score
         Solution solutionWithNoPenaltyScore = service.createRandomSolution(reservations, laboratoryService.findAll());
-        solutionWithNoPenaltyScore.setPenalties(service.getPenaltyOccurrences(solutionWithNoPenaltyScore));
+        solutionWithNoPenaltyScore.setPenalties(service.getPenaltyOccurrences(solutionWithNoPenaltyScore.getAssignments()));
         double initialPenaltyScore = solutionWithNoPenaltyScore.getPenaltyScore();
 
         service.runAlgorithm(semester);
@@ -164,7 +165,7 @@ class GeneticAlgorithmTest {
 
         // Calculate the optimized penalty score
         Solution solution = new Solution(assignation.getAssignments(), null);
-        EnumMap<PenaltyType, Integer> penaltyOccurrences = service.getPenaltyOccurrences(solution);
+        EnumMap<PenaltyType, Integer> penaltyOccurrences = service.getPenaltyOccurrences(solution.getAssignments());
         solution.setPenalties(penaltyOccurrences);
         double optimizedPenaltyScore = solution.getPenaltyScore();
 

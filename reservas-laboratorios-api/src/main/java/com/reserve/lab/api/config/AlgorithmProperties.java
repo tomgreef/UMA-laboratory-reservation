@@ -29,6 +29,10 @@ public class AlgorithmProperties {
     @Max(value = 1, message = "El valor debe estar entre 0 y 1")
     private double elitismReplacementRate = 0.5;
 
+    @Min(value = 0, message = "El valor debe estar entre 0 y 1")
+    @Max(value = 1, message = "El valor debe estar entre 0 y 1")
+    private double allowedPercentageOfConflictsPerSubject = 0.2;
+
     public void updateProperties(AlgorithmProperties updatedProperties) {
         this.populationSize = updatedProperties.populationSize;
         this.maxGeneration = updatedProperties.maxGeneration;
@@ -36,5 +40,6 @@ public class AlgorithmProperties {
         this.mutationRate = updatedProperties.mutationRate;
         this.mutationRepairRate = updatedProperties.mutationRepairRate;
         this.elitismReplacementRate = updatedProperties.elitismReplacementRate;
+        this.allowedPercentageOfConflictsPerSubject = updatedProperties.allowedPercentageOfConflictsPerSubject;
     }
 }

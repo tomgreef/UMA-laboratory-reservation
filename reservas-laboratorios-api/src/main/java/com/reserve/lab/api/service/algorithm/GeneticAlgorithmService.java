@@ -1,4 +1,4 @@
-package com.reserve.lab.api.service;
+package com.reserve.lab.api.service.algorithm;
 
 import com.reserve.lab.api.config.AlgorithmProperties;
 import com.reserve.lab.api.model.*;
@@ -6,6 +6,10 @@ import com.reserve.lab.api.model.helper.DateSlot;
 import com.reserve.lab.api.model.helper.Solution;
 import com.reserve.lab.api.model.type.PenaltyType;
 import com.reserve.lab.api.model.type.ScheduleType;
+import com.reserve.lab.api.service.LaboratoryService;
+import com.reserve.lab.api.service.ReservationAssignmentService;
+import com.reserve.lab.api.service.ReservationConflictService;
+import com.reserve.lab.api.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class GeneticAlgorithmService {
-    private static final double ALLOWED_PERCENTAGE_OF_CONFLICTS_PER_SUBJECT = 0.2;
     private final Random rand;
     private final AlgorithmProperties properties;
     private final ReservationService reservationService;
@@ -127,18 +130,17 @@ public class GeneticAlgorithmService {
         }
 
         // Calculate and set the penalty score for this random solution
-        EnumMap<PenaltyType, Integer> penaltyOccurrences = getPenaltyOccurrences(solution);
+        EnumMap<PenaltyType, Integer> penaltyOccurrences = getPenaltyOccurrences(solution.getAssignments());
         solution.setPenalties(penaltyOccurrences);
 
         return solution;
     }
 
-    public EnumMap<PenaltyType, Integer> getPenaltyOccurrences(Solution solution) {
+    public EnumMap<PenaltyType, Integer> getPenaltyOccurrences(List<ReservationAssignment> assignments) {
         EnumMap<PenaltyType, Integer> penaltyCount = new EnumMap<>(PenaltyType.class);
-        List<ReservationAssignment> assignments = solution.getAssignments();
         HashMap<Subject, List<ReservationAssignment>> assignmentsPerSubjectGroup = new HashMap<>();
 
-        solution.getAssignments().forEach(reservationAssignment -> {
+        assignments.forEach(reservationAssignment -> {
             Subject subject = reservationAssignment.getReservation().getSubject();
             if (assignmentsPerSubjectGroup.containsKey(subject)) {
                 assignmentsPerSubjectGroup.get(subject).add(reservationAssignment);
@@ -224,7 +226,7 @@ public class GeneticAlgorithmService {
             List<Reservation> reservationsPerSubject = reservationsWithConflicts.stream().filter(reservation -> reservation.getSubject().getId().equals(subject.getId())).toList();
             double percentageOfConflictsForSubject = (double) reservationsWithConflicts.size() / reservationsPerSubject.size();
 
-            if (percentageOfConflictsForSubject > ALLOWED_PERCENTAGE_OF_CONFLICTS_PER_SUBJECT) {
+            if (percentageOfConflictsForSubject > properties.getAllowedPercentageOfConflictsPerSubject()) {
                 penaltyCount.put(PenaltyType.RESERVATION_CONFLICTS_NOT_DISTRIBUTED_EQUALLY_ACROSS_SUBJECTS, penaltyCount.getOrDefault(PenaltyType.RESERVATION_CONFLICTS_NOT_DISTRIBUTED_EQUALLY_ACROSS_SUBJECTS, 0) + 1);
             }
 
@@ -268,7 +270,7 @@ public class GeneticAlgorithmService {
 
     private void evaluateFitness(List<Solution> population) {
         for (Solution solution : population) {
-            EnumMap<PenaltyType, Integer> penalties = getPenaltyOccurrences(solution);
+            EnumMap<PenaltyType, Integer> penalties = getPenaltyOccurrences(solution.getAssignments());
             solution.setPenalties(penalties);
         }
     }
@@ -335,7 +337,7 @@ public class GeneticAlgorithmService {
                 newOffspring.setAssignments(newReservations);
 
                 // Calculate penalty score for the new offspring
-                newOffspring.setPenalties(getPenaltyOccurrences(newOffspring));
+                newOffspring.setPenalties(getPenaltyOccurrences(newOffspring.getAssignments()));
 
                 offspring.add(newOffspring);
             } else {
@@ -441,7 +443,7 @@ public class GeneticAlgorithmService {
         reservationConflictService.findAndSaveConflicts(reservationAssignments);
     }
 
-    private String calculateTimeInSeconds(long startTime, long endTime) {
+    public String calculateTimeInSeconds(long startTime, long endTime) {
         // Round up to 3 decimals
         DecimalFormat df = new DecimalFormat("#.###");
         df.setRoundingMode(RoundingMode.CEILING);

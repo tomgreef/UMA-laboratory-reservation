@@ -26,4 +26,12 @@ public class ReservationAssignment {
 
     @ManyToOne
     private Semester semester;
+
+    @Override
+    public String toString() {
+        return "ReservationAssignment{" +
+                "reservation=" + reservation.getId() +
+                ", laboratory=" + laboratory.getId() +
+                '}';
+    }
 }

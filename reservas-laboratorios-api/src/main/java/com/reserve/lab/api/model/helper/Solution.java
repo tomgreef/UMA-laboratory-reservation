@@ -22,6 +22,10 @@ public class Solution {
     private EnumMap<PenaltyType, Integer> penalties;
 
     public double getPenaltyScore() {
+        return getPenaltyScore(penalties);
+    }
+
+    public static double getPenaltyScore(Map<PenaltyType, Integer> penalties) {
         double score = 0;
         double a1ConstraintPenalty = 0;
         double totalPenalties = 0;
