@@ -31,3 +31,4 @@ algorithm:
   mutation-rate: 0.2
   mutation-repair-rate: 0.8
   elitism-replacement-rate: 0.5
+  algorithm-type: greedy_algorithm

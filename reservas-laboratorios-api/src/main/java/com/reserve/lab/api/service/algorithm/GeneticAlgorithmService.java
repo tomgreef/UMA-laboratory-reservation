@@ -4,6 +4,7 @@ import com.reserve.lab.api.config.AlgorithmProperties;
 import com.reserve.lab.api.model.*;
 import com.reserve.lab.api.model.helper.DateSlot;
 import com.reserve.lab.api.model.helper.Solution;
+import com.reserve.lab.api.model.type.AlgorithmType;
 import com.reserve.lab.api.model.type.PenaltyType;
 import com.reserve.lab.api.model.type.ScheduleType;
 import com.reserve.lab.api.service.LaboratoryService;
@@ -36,7 +37,6 @@ public class GeneticAlgorithmService {
         this.reservationConflictService = reservationConflictService;
         this.rand = new Random();
     }
-
 
     public void runAlgorithm(Semester semester) {
         log.info("Running task for semester {} - {} | {}", semester.getStartYear(), semester.getEndYear(), semester.getPeriod());
@@ -441,6 +441,10 @@ public class GeneticAlgorithmService {
         reservationAssignments.forEach(assignment -> assignment.setSemester(semester));
         reservationAssignmentService.saveSolution(reservationAssignments);
         reservationConflictService.findAndSaveConflicts(reservationAssignments);
+    }
+
+    public AlgorithmType getAlgorithmType() {
+        return properties.getAlgorithmType();
     }
 
     public String calculateTimeInSeconds(long startTime, long endTime) {

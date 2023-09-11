@@ -1,5 +1,6 @@
 package com.reserve.lab.api.config;
 
+import com.reserve.lab.api.model.type.AlgorithmType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
@@ -33,6 +34,8 @@ public class AlgorithmProperties {
     @Max(value = 1, message = "El valor debe estar entre 0 y 1")
     private double allowedPercentageOfConflictsPerSubject = 0.2;
 
+    private AlgorithmType algorithmType = AlgorithmType.GENETIC_ALGORITHM;
+
     public void updateProperties(AlgorithmProperties updatedProperties) {
         this.populationSize = updatedProperties.populationSize;
         this.maxGeneration = updatedProperties.maxGeneration;
@@ -41,5 +44,6 @@ public class AlgorithmProperties {
         this.mutationRepairRate = updatedProperties.mutationRepairRate;
         this.elitismReplacementRate = updatedProperties.elitismReplacementRate;
         this.allowedPercentageOfConflictsPerSubject = updatedProperties.allowedPercentageOfConflictsPerSubject;
+        this.algorithmType = updatedProperties.algorithmType;
     }
 }

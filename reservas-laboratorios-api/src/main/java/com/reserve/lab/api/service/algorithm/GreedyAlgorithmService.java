@@ -56,7 +56,6 @@ public class GreedyAlgorithmService {
         if (reservationIndex == reservations.size()) {
             // All reservations have been assigned, calculate penalty.
             double penalty = Solution.getPenaltyScore(geneticAlgorithmService.getPenaltyOccurrences(currentAssignment));
-            log.info("Current Assignment {}: {}", penalty, currentAssignment);
             if (penalty < lowestPenalty) {
                 lowestPenalty = penalty;
                 bestAssignment = new ArrayList<>(currentAssignment);

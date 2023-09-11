@@ -4,6 +4,7 @@ import com.reserve.lab.api.model.Task;
 import com.reserve.lab.api.model.type.TaskStatusType;
 import com.reserve.lab.api.repository.TaskRepository;
 import com.reserve.lab.api.service.algorithm.GeneticAlgorithmService;
+import com.reserve.lab.api.service.algorithm.GreedyAlgorithmService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +22,7 @@ public class SchedulerService {
     private static final int TIMEOUT_MINUTES_RUNNING_TASK = 30;
     private final TaskRepository repository;
     private final GeneticAlgorithmService geneticAlgorithmService;
+    private final GreedyAlgorithmService greedyAlgorithmService;
 
     @Scheduled(cron = "${scheduler.cron}")
     public void scheduleTask() {
@@ -36,8 +38,10 @@ public class SchedulerService {
                 task.setStatus(String.valueOf(TaskStatusType.RUNNING));
                 repository.save(task);
                 try {
-                    geneticAlgorithmService.runAlgorithm(task.getSemester());
-                    // TODO: Future Lines of Research - Try out Exhaustive algorithms
+                    switch (geneticAlgorithmService.getAlgorithmType()) {
+                        case GENETIC_ALGORITHM -> geneticAlgorithmService.runAlgorithm(task.getSemester());
+                        case GREEDY_ALGORITHM -> greedyAlgorithmService.runAlgorithm(task.getSemester());
+                    }
                 } catch (Exception e) {
                     log.error("Error running algorithm for semester {} - {} | {}", task.getSemester().getStartYear(), task.getSemester().getEndYear(), task.getSemester().getPeriod());
 
