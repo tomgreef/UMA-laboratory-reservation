@@ -430,7 +430,7 @@ public class GeneticAlgorithmService {
         return population.stream().min(Comparator.comparingDouble(Solution::getPenaltyScore)).orElse(population.get(0));
     }
 
-    private void saveSolution(Solution solution, Semester semester) {
+    public void saveSolution(Solution solution, Semester semester) {
         // Implement this method to save the best solution and potential conflicts
         // You can use the log.info() method to print the solution and conflicts to the console
         List<ReservationAssignment> reservationAssignments = solution.getAssignments();
@@ -441,7 +441,7 @@ public class GeneticAlgorithmService {
         reservationConflictService.findAndSaveConflicts(reservationAssignments);
     }
 
-    private String calculateTimeInSeconds(long startTime, long endTime) {
+    public String calculateTimeInSeconds(long startTime, long endTime) {
         // Round up to 3 decimals
         DecimalFormat df = new DecimalFormat("#.###");
         df.setRoundingMode(RoundingMode.CEILING);

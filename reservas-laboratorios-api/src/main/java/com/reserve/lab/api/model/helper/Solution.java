@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,15 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
 public class Solution {
     private List<ReservationAssignment> assignments;
     private EnumMap<PenaltyType, Integer> penalties;
+
+    public Solution() {
+        this.assignments = new ArrayList<>();
+        this.penalties = new EnumMap<>(PenaltyType.class);
+    }
 
     public double getPenaltyScore() {
         double score = 0;
