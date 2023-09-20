@@ -275,7 +275,7 @@ public class GeneticAlgorithmService {
 
     private List<Solution> selection(List<Solution> population) {
         // Step 1: Elitism Selection - Preserve a portion of the best solutions
-        int elitismCount = (int) (population.size() * properties.getElitismReplacementRate());
+        int elitismCount = (int) (population.size() * properties.getElitismSelectionRate());
         List<Solution> elitismSolutions = population.stream()
                 .sorted(Comparator.comparingDouble(Solution::getPenaltyScore))
                 .limit(elitismCount)

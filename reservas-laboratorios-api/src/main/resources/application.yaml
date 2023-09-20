@@ -27,7 +27,7 @@ scheduler:
 algorithm:
   populationSize: 100
   maxGeneration: 50
+  elitism-selection-rate: 0.5
   crossover-rate: 0.4
   mutation-rate: 0.2
   mutation-repair-rate: 0.8
-  elitism-replacement-rate: 0.5
